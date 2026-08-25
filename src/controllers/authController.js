@@ -1,0 +1,79 @@
+import { prisma } from "../config/db.js";
+import bcrypt from "bcryptjs";
+import { generateToken } from "../utils/generateToken.js";
+
+const register = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    const userExists = await prisma.user.findUnique({
+      where: { email: email },
+    });
+
+    if (userExists) {
+      return res.status(400).json({ error: "User already exists" });
+    }
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const user = await prisma.user.create({
+      data: {
+        name,
+        email,
+        passwordHash: hashedPassword,
+      },
+    });
+
+    // generating jwt token
+    const token = generateToken(user.id, res);
+    res.status(201).json({
+      status: "success",
+      data: {
+        user: { id: user.id, name: name, email: email, role: user.role },
+        token,
+      },
+    });
+  } catch (error) {
+    console.error("Error during registration:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+const login = async (req, res) => {
+  const { email, password } = req.body;
+
+  const user = await prisma.user.findUnique({ where: { email: email } });
+  if (!user) {
+    return res.status(400).json({ error: "Invalid email or password " });
+  }
+  const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
+  if (!isPasswordValid) {
+    return res.status(400).json({ error: "Invalid email or password" });
+  }
+
+  // generating jwt tokern
+
+  const token = generateToken(user.id, res);
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+      token,
+    },
+  });
+};
+
+const logout = (req, res) => {
+  res.cookie("jwt", "", { httpOnly: true, expires: new Date(0) });
+  res
+    .status(200)
+    .json({ status: "success", message: "User logged out successfully" });
+};
+
+export { register, login, logout };
