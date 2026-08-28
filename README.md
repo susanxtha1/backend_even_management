@@ -91,6 +91,8 @@ The server will start at `http://localhost:3000`.
 | `POST` | `/auth/register` | Register a new user         | `{ name, email, password }` |
 | `POST` | `/auth/login`    | Login user                  | `{ email, password }`       |
 | `POST` | `/auth/logout`   | Logout user (clears cookie) | —                           |
+| `GET` | `/auth/me`   | your | —                           |
+| `USER` | `/auth/user`   | all user  | —                           |
 
 #### Register — `POST /auth/register`
 
