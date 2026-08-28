@@ -1,6 +1,7 @@
 import { prisma } from "../config/db.js";
 import bcrypt from "bcryptjs";
 import { generateToken } from "../utils/generateToken.js";
+import asyncHandler from "express-async-handler";
 
 const register = async (req, res) => {
   try {
@@ -76,4 +77,44 @@ const logout = (req, res) => {
     .json({ status: "success", message: "User logged out successfully" });
 };
 
-export { register, login, logout };
+const getMe = asyncHandler(async (req, res) => {
+  const user = await prisma.user.findUnique({
+    where: { id: req.user.id },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      createdAt: true,
+    },
+  });
+
+  if (!user) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+
+  res.status(200).json({
+    status: "success",
+    data: { user },
+  });
+});
+
+const getAllUsers = asyncHandler(async (req, res) => {
+  const users = await prisma.user.findMany({
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      createdAt: true,
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  res
+    .status(200)
+    .json({ status: "success", results: users.length, data: { users } });
+});
+
+export { register, login, logout, getMe, getAllUsers };
