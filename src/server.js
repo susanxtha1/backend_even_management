@@ -15,13 +15,13 @@ const app = express();
 app.use(
   cors({
     origin: ["http://localhost:3000", "http://localhost:5173"], // Add your frontend URLs
-    credentials: true, // Crucial for passing HTTP-only JWT cookies
+    credentials: true, 
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
 
-//body parsing middleware
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
