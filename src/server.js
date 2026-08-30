@@ -4,11 +4,20 @@ import { connectDB, disconnectDB } from "./config/db.js";
 
 import eventRoutes from "./routes/eventRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import cors from "cors";
 
 connectDB();
 config();
 
 const app = express();
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "http://localhost:5173"], // Add your frontend URLs
+    credentials: true, // Crucial for passing HTTP-only JWT cookies
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
+);
 
 //body parsing middleware
 
