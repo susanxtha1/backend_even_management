@@ -2,10 +2,11 @@ import { prisma } from "../config/db.js";
 import bcrypt from "bcryptjs";
 import { generateToken } from "../utils/generateToken.js";
 import asyncHandler from "express-async-handler";
+import { PrismaClient, UserRole } from "@prisma/client";
 
 const register = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
 
     const userExists = await prisma.user.findUnique({
       where: { email: email },
@@ -17,11 +18,20 @@ const register = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
+    console.log("the role is:", role);
+
+    const allowedRoles = ["ORGANIZER", "ATTENDEE", "ADMIN"];
+    const parsedRole = role ? String(role).trim().toUpperCase() : null;
+    const finalRole = allowedRoles.includes(parsedRole)
+      ? parsedRole
+      : "ATTENDEE";
+
     const user = await prisma.user.create({
       data: {
         name,
         email,
         passwordHash: hashedPassword,
+        role: finalRole, // Set the assigned role
       },
     });
 

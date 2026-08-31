@@ -1,10 +1,10 @@
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 enum UserRole {
@@ -53,10 +53,22 @@ model Venue {
   @@map("venues")
 }
 
+model Category {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String   @unique @default("Other") @db.VarChar(100)
+  slug      String   @unique @default("other") @db.VarChar(100)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  events Event[]
+
+  @@map("categories")
+}
+
 model Event {
   id          String   @id @default(uuid()) @db.Uuid
   organizerId String   @map("organizer_id") @db.Uuid
   venueId     String   @map("venue_id") @db.Uuid
+  categoryId  String   @default("00000000-0000-0000-0000-000000000000") @map("category_id") @db.Uuid
   title       String   @db.VarChar(200)
   description String?  @db.Text
   startTime   DateTime @map("start_time")
@@ -67,9 +79,11 @@ model Event {
   organizer User         @relation("OrganizerEvents", fields: [organizerId], references: [id], onDelete: Cascade)
   venue     Venue        @relation(fields: [venueId], references: [id], onDelete: Restrict)
   tickets   TicketType[]
+  category  Category     @relation(fields: [categoryId], references: [id])
 
   @@index([organizerId])
   @@index([venueId])
+  @@index([categoryId])
   @@index([startTime(sort: Desc)])
   @@map("events")
 }

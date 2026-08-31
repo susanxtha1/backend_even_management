@@ -4,12 +4,15 @@ import { connectDB, disconnectDB } from "./config/db.js";
 
 import eventRoutes from "./routes/eventRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import venueRoutes from "./routes/venueRoutes.js";
 import cors from "cors";
 
 connectDB();
 config();
 
 const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
     origin: ["http://localhost:3000", "http://localhost:5173"], // Add your frontend URLs
@@ -21,11 +24,9 @@ app.use(
 
 //body parsing middleware
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-app.use("/home", eventRoutes);
-app.use("/auth", authRoutes);
+app.use("/api/events", eventRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/venues", venueRoutes);
 
 const PORT = process.env.PORT || 3000;
 
