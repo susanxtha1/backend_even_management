@@ -86,13 +86,51 @@ The server will start at `http://localhost:3000`.
 
 ### Authentication (`/auth`)
 
-| Method | Endpoint         | Description                 | Request Body                |
-| ------ | ---------------- | --------------------------- | --------------------------- |
-| `POST` | `/auth/register` | Register a new user         | `{ name, email, password }` |
-| `POST` | `/auth/login`    | Login user                  | `{ email, password }`       |
-| `POST` | `/auth/logout`   | Logout user (clears cookie) | —                           |
-| `GET` | `/auth/me`   | your | —                           |
-| `USER` | `/auth/user`   | all user  | —                           |
+| Method   | Endpoint              | Description                                        | Request Body                                                  |
+| -------- | --------------------- | -------------------------------------------------- | ------------------------------------------------------------- |
+| `POST`   | `/auth/register`      | Register a new user                                | `{ name, email, password }`                                   |
+| `POST`   | `/auth/login`         | Login user                                         | `{ email, password }`                                         |
+| `POST`   | `/auth/logout`        | Logout user (clears cookie)                        | —                                                             |
+| `GET`    | `/auth/me`            | your                                               | —                                                             |
+| `USER`   | `/auth/user`          | all user                                           | —                                                             |
+| `GET`    | `/events`             | Get all events with pagination and filters         | —                                                             |
+| `GET`    | `/events/:id`         | Get a single event by ID                           | —                                                             |
+| `POST`   | `/events`             | Create a new event                                 | `{ venueId, title, description, startTime, endTime, status }` |
+| `PUT`    | `/events/:id`         | Update an existing event                           | `{ venueId, title, description, startTime, endTime, status }` |
+| `DELETE` | `/events/:id`         | Delete an event                                    | —                                                             |
+| `GET`    | `/api/categories`     | Get all categories with event count                | —                                                             |
+| `GET`    | `/api/categories/:id` | Get a single category by ID with associated events | —                                                             |
+| `POST`   | `/api/categories`     | Create a new category                              | `{ name, ... }`                                               |
+| `PUT`    | `/api/categories/:id` | Update an existing category                        | `{ name, ... }`                                               |
+| `DELETE` | `/api/categories/:id` | Delete a category                                  | —                                                             |
+| `GET`    | `/api/venues`         | Get all venues with pagination and event count     | —                                                             |
+| `GET`    | `/api/venues/:id`     | Get a single venue with associated events          | —                                                             |
+| `POST`   | `/api/venues`         | Create a new venue                                 | `{ name, address, capacity }`                                 |
+| `PUT`    | `/api/venues/:id`     | Update an existing venue                           | `{ name, address, capacity }`                                 |
+| `DELETE` | `/api/venues/:id`     | Delete a venue                                     | —                                                             |
+
+| Module         | Method   | Endpoint              | Access               |
+| -------------- | -------- | --------------------- | -------------------- |
+| **Auth**       | `POST`   | `/auth/register`      | Public               |
+| **Auth**       | `POST`   | `/auth/login`         | Public               |
+| **Auth**       | `POST`   | `/auth/logout`        | Authenticated User   |
+| **Auth**       | `GET`    | `/auth/me`            | Authenticated User   |
+| **Auth**       | `GET`    | `/auth/user`          | Admin                |
+| **Events**     | `GET`    | `/api/events`         | Public               |
+| **Events**     | `GET`    | `/api/events/:id`     | Public               |
+| **Events**     | `POST`   | `/api/events`         | **ORGANIZER, ADMIN** |
+| **Events**     | `PUT`    | `/api/events/:id`     | **ORGANIZER, ADMIN** |
+| **Events**     | `DELETE` | `/api/events/:id`     | **ORGANIZER, ADMIN** |
+| **Categories** | `GET`    | `/api/categories`     | Public               |
+| **Categories** | `GET`    | `/api/categories/:id` | Public               |
+| **Categories** | `POST`   | `/api/categories`     | **ADMIN**            |
+| **Categories** | `PUT`    | `/api/categories/:id` | **ADMIN**            |
+| **Categories** | `DELETE` | `/api/categories/:id` | **ADMIN**            |
+| **Venues**     | `GET`    | `/api/venues`         | Public               |
+| **Venues**     | `GET`    | `/api/venues/:id`     | Public               |
+| **Venues**     | `POST`   | `/api/venues`         | **ADMIN, ORGANIZER** |
+| **Venues**     | `PUT`    | `/api/venues/:id`     | **ADMIN, ORGANIZER** |
+| **Venues**     | `DELETE` | `/api/venues/:id`     | **ADMIN**            |
 
 #### Register — `POST /auth/register`
 

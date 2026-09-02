@@ -6,6 +6,7 @@ import eventRoutes from "./routes/eventRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import venueRoutes from "./routes/venueRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
+import categoryRoutes from "./routes/categoryRoutes.js";
 import cors from "cors";
 
 connectDB();
@@ -28,7 +29,7 @@ app.use(
 app.use("/api/events", eventRoutes);
 app.use("/auth", authRoutes);
 app.use("/api/venues", venueRoutes);
-app.use("/api/categories",categoryRoutes);
+app.use("/api/categories", categoryRoutes);
 
 const PORT = process.env.PORT || 3000;
 
