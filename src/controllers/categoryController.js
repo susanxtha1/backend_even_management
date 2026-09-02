@@ -1,4 +1,4 @@
-import prisma from "../config/prisma.js";
+import { prisma } from "../config/db.js";
 
 // GET /api/categories - Get all categories
 export const getCategories = async (req, res) => {
