@@ -51,13 +51,36 @@ export const getCategoryById = async (req, res) => {
 // POST /api/categories - Create new category (Protected: ADMIN)
 export const createCategory = async (req, res) => {
   try {
-    const category = await prisma.category.create({
-      data: req.body,
+    const { name, slug } = req.body;
+
+    // Check if category name already exists
+    const existingCategory = await prisma.category.findUnique({
+      where: { name },
     });
 
-    res.status(201).json({ success: true, data: category });
+    if (existingCategory) {
+      return res.status(409).json({
+        success: false,
+        message: "Category name already exists",
+      });
+    }
+
+    const category = await prisma.category.create({
+      data: {
+        name,
+        slug,
+      },
+    });
+
+    res.status(201).json({
+      success: true,
+      data: category,
+    });
   } catch (error) {
-    res.status(400).json({ success: false, message: error.message });
+    res.status(400).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
