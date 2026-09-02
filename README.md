@@ -4,18 +4,18 @@ A RESTful backend API for an Event Management System built with **Express.js**, 
 
 ## Tech Stack
 
-| Technology | Purpose |
-|------------|---------|
-| **Node.js** | Runtime |
-| **Express 5** | Web framework |
-| **Prisma ORM** | Database ORM & migrations |
-| **PostgreSQL (Neon)** | Cloud database |
-| **JWT** | Authentication tokens |
-| **bcryptjs** | Password hashing |
-| **Zod** | Request validation |
-| **CORS** | Cross-origin resource sharing |
-| **dotenv** | Environment variables |
-| **nodemon** | Dev auto-reload |
+| Technology            | Purpose                       |
+| --------------------- | ----------------------------- |
+| **Node.js**           | Runtime                       |
+| **Express 5**         | Web framework                 |
+| **Prisma ORM**        | Database ORM & migrations     |
+| **PostgreSQL (Neon)** | Cloud database                |
+| **JWT**               | Authentication tokens         |
+| **bcryptjs**          | Password hashing              |
+| **Zod**               | Request validation            |
+| **CORS**              | Cross-origin resource sharing |
+| **dotenv**            | Environment variables         |
+| **nodemon**           | Dev auto-reload               |
 
 ## Prerequisites
 
@@ -49,11 +49,11 @@ JWT_SECRET="your-secret-key"
 JWT_EXPIRES_IN="7d"
 ```
 
-| Variable | Description |
-|----------|-------------|
-| `DATABASE_URL` | PostgreSQL connection string |
-| `NODE_ENV` | `development` or `production` |
-| `JWT_SECRET` | Secret key for signing JWT tokens |
+| Variable         | Description                                  |
+| ---------------- | -------------------------------------------- |
+| `DATABASE_URL`   | PostgreSQL connection string                 |
+| `NODE_ENV`       | `development` or `production`                |
+| `JWT_SECRET`     | Secret key for signing JWT tokens            |
 | `JWT_EXPIRES_IN` | Token expiration duration (e.g. `7d`, `24h`) |
 
 ### 4. Run database migrations
@@ -80,21 +80,62 @@ The server will start at `http://localhost:3000`.
 
 ### Health Check
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/` | Returns `{ message: "hello" }` |
+| Method | Endpoint | Description                    |
+| ------ | -------- | ------------------------------ |
+| `GET`  | `/`      | Returns `{ message: "hello" }` |
 
 ### Authentication (`/auth`)
 
-| Method | Endpoint | Description | Request Body |
-|--------|----------|-------------|-------------|
-| `POST` | `/auth/register` | Register a new user | `{ name, email, password }` |
-| `POST` | `/auth/login` | Login user | `{ email, password }` |
-| `POST` | `/auth/logout` | Logout user (clears cookie) | — |
+| Method   | Endpoint              | Description                                        | Request Body                                                  |
+| -------- | --------------------- | -------------------------------------------------- | ------------------------------------------------------------- |
+| `POST`   | `/auth/register`      | Register a new user                                | `{ name, email, password }`                                   |
+| `POST`   | `/auth/login`         | Login user                                         | `{ email, password }`                                         |
+| `POST`   | `/auth/logout`        | Logout user (clears cookie)                        | —                                                             |
+| `GET`    | `/auth/me`            | your                                               | —                                                             |
+| `USER`   | `/auth/user`          | all user                                           | —                                                             |
+| `GET`    | `/events`             | Get all events with pagination and filters         | —                                                             |
+| `GET`    | `/events/:id`         | Get a single event by ID                           | —                                                             |
+| `POST`   | `/events`             | Create a new event                                 | `{ venueId, title, description, startTime, endTime, status }` |
+| `PUT`    | `/events/:id`         | Update an existing event                           | `{ venueId, title, description, startTime, endTime, status }` |
+| `DELETE` | `/events/:id`         | Delete an event                                    | —                                                             |
+| `GET`    | `/api/categories`     | Get all categories with event count                | —                                                             |
+| `GET`    | `/api/categories/:id` | Get a single category by ID with associated events | —                                                             |
+| `POST`   | `/api/categories`     | Create a new category                              | `{ name, ... }`                                               |
+| `PUT`    | `/api/categories/:id` | Update an existing category                        | `{ name, ... }`                                               |
+| `DELETE` | `/api/categories/:id` | Delete a category                                  | —                                                             |
+| `GET`    | `/api/venues`         | Get all venues with pagination and event count     | —                                                             |
+| `GET`    | `/api/venues/:id`     | Get a single venue with associated events          | —                                                             |
+| `POST`   | `/api/venues`         | Create a new venue                                 | `{ name, address, capacity }`                                 |
+| `PUT`    | `/api/venues/:id`     | Update an existing venue                           | `{ name, address, capacity }`                                 |
+| `DELETE` | `/api/venues/:id`     | Delete a venue                                     | —                                                             |
+
+| Module         | Method   | Endpoint              | Access               |
+| -------------- | -------- | --------------------- | -------------------- |
+| **Auth**       | `POST`   | `/auth/register`      | Public               |
+| **Auth**       | `POST`   | `/auth/login`         | Public               |
+| **Auth**       | `POST`   | `/auth/logout`        | Authenticated User   |
+| **Auth**       | `GET`    | `/auth/me`            | Authenticated User   |
+| **Auth**       | `GET`    | `/auth/user`          | Admin                |
+| **Events**     | `GET`    | `/api/events`         | Public               |
+| **Events**     | `GET`    | `/api/events/:id`     | Public               |
+| **Events**     | `POST`   | `/api/events`         | **ORGANIZER, ADMIN** |
+| **Events**     | `PUT`    | `/api/events/:id`     | **ORGANIZER, ADMIN** |
+| **Events**     | `DELETE` | `/api/events/:id`     | **ORGANIZER, ADMIN** |
+| **Categories** | `GET`    | `/api/categories`     | Public               |
+| **Categories** | `GET`    | `/api/categories/:id` | Public               |
+| **Categories** | `POST`   | `/api/categories`     | **ADMIN**            |
+| **Categories** | `PUT`    | `/api/categories/:id` | **ADMIN**            |
+| **Categories** | `DELETE` | `/api/categories/:id` | **ADMIN**            |
+| **Venues**     | `GET`    | `/api/venues`         | Public               |
+| **Venues**     | `GET`    | `/api/venues/:id`     | Public               |
+| **Venues**     | `POST`   | `/api/venues`         | **ADMIN, ORGANIZER** |
+| **Venues**     | `PUT`    | `/api/venues/:id`     | **ADMIN, ORGANIZER** |
+| **Venues**     | `DELETE` | `/api/venues/:id`     | **ADMIN**            |
 
 #### Register — `POST /auth/register`
 
 **Request:**
+
 ```json
 {
   "name": "John Doe",
@@ -104,16 +145,23 @@ The server will start at `http://localhost:3000`.
 ```
 
 **Validation Rules:**
+
 - `name` — required, 3–100 characters
 - `email` — required, valid email, max 255 characters
 - `password` — required, 6–255 characters
 
 **Success Response (201):**
+
 ```json
 {
   "status": "success",
   "data": {
-    "user": { "id": "uuid", "name": "John Doe", "email": "john@example.com", "role": "ATTENDEE" },
+    "user": {
+      "id": "uuid",
+      "name": "John Doe",
+      "email": "john@example.com",
+      "role": "ATTENDEE"
+    },
     "token": "jwt-token"
   }
 }
@@ -122,6 +170,7 @@ The server will start at `http://localhost:3000`.
 #### Login — `POST /auth/login`
 
 **Request:**
+
 ```json
 {
   "email": "john@example.com",
@@ -130,11 +179,17 @@ The server will start at `http://localhost:3000`.
 ```
 
 **Success Response (200):**
+
 ```json
 {
   "status": "success",
   "data": {
-    "user": { "id": "uuid", "name": "John Doe", "email": "john@example.com", "role": "ATTENDEE" },
+    "user": {
+      "id": "uuid",
+      "name": "John Doe",
+      "email": "john@example.com",
+      "role": "ATTENDEE"
+    },
     "token": "jwt-token"
   }
 }
@@ -142,9 +197,9 @@ The server will start at `http://localhost:3000`.
 
 ### Events (`/home`)
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/home/hello` | Placeholder — returns welcome message |
+| Method | Endpoint      | Description                           |
+| ------ | ------------- | ------------------------------------- |
+| `GET`  | `/home/hello` | Placeholder — returns welcome message |
 
 ## Database Schema
 
@@ -163,15 +218,15 @@ User ──────< AttendeeTicket (scannedBy)
 
 ### Models
 
-| Model | Description |
-|-------|-------------|
-| **User** | Users with roles: `ORGANIZER`, `ATTENDEE`, `ADMIN` |
-| **Venue** | Event venues with name, address, capacity |
-| **Event** | Events linked to an organizer and venue |
-| **TicketType** | Ticket categories per event (name, price, quantity) |
-| **Booking** | User bookings with status: `PENDING`, `CONFIRMED`, `CANCELLED` |
-| **AttendeeTicket** | Individual tickets with QR code tokens for entry |
-| **Payment** | Payment records with status: `PENDING`, `COMPLETED`, `FAILED`, `REFUNDED` |
+| Model              | Description                                                               |
+| ------------------ | ------------------------------------------------------------------------- |
+| **User**           | Users with roles: `ORGANIZER`, `ATTENDEE`, `ADMIN`                        |
+| **Venue**          | Event venues with name, address, capacity                                 |
+| **Event**          | Events linked to an organizer and venue                                   |
+| **TicketType**     | Ticket categories per event (name, price, quantity)                       |
+| **Booking**        | User bookings with status: `PENDING`, `CONFIRMED`, `CANCELLED`            |
+| **AttendeeTicket** | Individual tickets with QR code tokens for entry                          |
+| **Payment**        | Payment records with status: `PENDING`, `COMPLETED`, `FAILED`, `REFUNDED` |
 
 ## Project Structure
 
@@ -202,16 +257,17 @@ backend/
 
 ## Scripts
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start dev server with nodemon |
-| `npx prisma migrate dev` | Run database migrations |
-| `npx prisma generate` | Generate Prisma Client |
-| `npx prisma studio` | Open Prisma Studio (DB browser) |
+| Command                  | Description                     |
+| ------------------------ | ------------------------------- |
+| `npm run dev`            | Start dev server with nodemon   |
+| `npx prisma migrate dev` | Run database migrations         |
+| `npx prisma generate`    | Generate Prisma Client          |
+| `npx prisma studio`      | Open Prisma Studio (DB browser) |
 
 ## CORS Configuration
 
 The server accepts requests from:
+
 - `http://localhost:3000`
 - `http://localhost:5173`
 
