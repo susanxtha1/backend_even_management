@@ -25,8 +25,9 @@ app.use(
 //body parsing middleware
 
 app.use("/api/events", eventRoutes);
-app.use("/api/auth", authRoutes);
+app.use("/auth", authRoutes);
 app.use("/api/venues", venueRoutes);
+app.use("/api/categories",categoryRoutes);
 
 const PORT = process.env.PORT || 3000;
 
