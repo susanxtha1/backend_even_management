@@ -55,11 +55,11 @@ model Venue {
 
 model Category {
   id        String   @id @default(uuid()) @db.Uuid
-  name      String   @unique @default("Other") @db.VarChar(100)
-  slug      String   @unique @default("other") @db.VarChar(100)
+  name      String   @unique @db.VarChar(100)
+  slug      String   @unique @db.VarChar(100)
   createdAt DateTime @default(now()) @map("created_at")
 
-  events Event[]
+  events    Event[]
 
   @@map("categories")
 }
